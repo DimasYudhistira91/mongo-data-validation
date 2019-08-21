@@ -10,8 +10,16 @@ mongoose.connect('mongodb://localhost/latihan1', {useNewUrlParser: true})
       type: String,
       required: true,
       minlength: 5,
-      maxlength: 200
+      maxlength: 200,
+
+      // SchemaType Option
+      lowercase: true,
+      // uppercase: true,
+      trim: true
     },
+
+    // ____________________________________\\
+
     category: {
       type: String,
       required: true,
@@ -19,8 +27,29 @@ mongoose.connect('mongodb://localhost/latihan1', {useNewUrlParser: true})
     },
     // ____________________________________\\
 
-    nim: Number,
-    email: String,
+    
+    nim: {
+      type: Number
+    },
+
+    // ASYNC Validator
+    email: {
+      type: String,
+      validate: {
+        isAsync: true,
+        validator: function( val, callback) {
+          setTimeout(() => {
+            const result = val && val.length > 0;
+            callback(result);
+          }, 2000)
+        },
+        message: 'email harus diisi'
+      }
+    },
+    
+    // _____________________________________\\
+
+
     judul: String,
 
     // Custom Validator
@@ -28,7 +57,7 @@ mongoose.connect('mongodb://localhost/latihan1', {useNewUrlParser: true})
       type: Array,
       validate: {
         validator: function(valid) {
-          return valid.length > 0;
+          return valid && valid.length > 0;
         },
         message: 'lengkapi, minimal 1 tag.'
       }
@@ -42,7 +71,11 @@ mongoose.connect('mongodb://localhost/latihan1', {useNewUrlParser: true})
       type: Number,
       required: function() { return this.isPublished; },
       min: 10,
-      max: 100
+      max: 100,
+
+      // SchemaType Option
+      get: v => Math.round(v),
+      set: v => Math.round(v)
     }
     // jika isPublish true maka nilai wajid di isi
     // ____________________________________________\\
@@ -52,14 +85,14 @@ mongoose.connect('mongodb://localhost/latihan1', {useNewUrlParser: true})
 
   async function createArtikel() {
     const artikel = new Artikel({
-      nama: 'Charlote',
-      nim: 09108244453,
-      category: 'S1',
-      email: 'charlotefamily@gmail.com',
-      judul: 'learn express',
-      tags: [],
+      nama: 'Katakuri',
+      nim: 1010297687,
+      category: 'D3',
+      email: 'charlotekatakuri@gmail.com',
+      judul: 'learn react',
+      tags: ['frontend'],
       isPublished: true,
-      nilai: 75
+      nilai: 75.7
     });
 
     try {
@@ -68,7 +101,10 @@ mongoose.connect('mongodb://localhost/latihan1', {useNewUrlParser: true})
       console.log(result);
     }
     catch (exp) {
-      console.log(exp.message);
+      
+      // Validation Errors
+      for (field in exp.errors)
+      console.log(exp.errors[field].message);
     }
   }
 
