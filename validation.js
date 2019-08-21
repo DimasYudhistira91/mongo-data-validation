@@ -5,23 +5,49 @@ mongoose.connect('mongodb://localhost/latihan1', {useNewUrlParser: true})
 
   const artikelSchema = new mongoose.Schema({
     nama: { type: String, required: true}, // "required" untuk validasi
+
+    // Built-in Validators
+    nama: {
+      type: String,
+      required: true,
+      minlength: 5,
+      maxlength: 200
+    },
+    category: {
+      type: String,
+      required: true,
+      enum: ['web', 'mobile', 'network']
+    },
+    // ____________________________________
+
     nim: Number,
     email: String,
     judul: String,
     tags: [ String ],
     tanggal: { type: Date, default: Date.now},
-    isPublished: Boolean
+    isPublished: Boolean,
+
+    // Built-in validator:
+    nilai: {
+      type: Number,
+      required: function() { return this.isPublished; },
+      min: 10,
+      max: 100
+    }
+    // jika isPublish true maka nilai wajid di isi
+    // ____________________________________________\\
   });
 
   const Artikel = mongoose.model('Artikel', artikelSchema);
 
   async function createArtikel() {
     const artikel = new Artikel({
-   
-      nim: 09108244873,
-      email: 'dulkempit@gmail.com',
-      judul: 'Function in javascript',
-      tags: ['javascript', 'frontend'],
+      nama: 'Charlote',
+      nim: 09108244453,
+      category: '-',
+      email: 'charlotefamily@gmail.com',
+      judul: 'learn express',
+      tags: ['express', 'backend'],
       isPublished: true
     });
 
