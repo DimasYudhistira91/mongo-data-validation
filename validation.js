@@ -4,7 +4,6 @@ mongoose.connect('mongodb://localhost/latihan1', {useNewUrlParser: true})
   .catch( err => console.error('Could not connect to MongoDB...', err ));
 
   const artikelSchema = new mongoose.Schema({
-    nama: { type: String, required: true}, // "required" untuk validasi
 
     // Built-in Validators
     nama: {
@@ -16,14 +15,25 @@ mongoose.connect('mongodb://localhost/latihan1', {useNewUrlParser: true})
     category: {
       type: String,
       required: true,
-      enum: ['web', 'mobile', 'network']
+      enum: ['D3', 'S1', 'S2']
     },
-    // ____________________________________
+    // ____________________________________\\
 
     nim: Number,
     email: String,
     judul: String,
-    tags: [ String ],
+
+    // Custom Validator
+    tags: {
+      type: Array,
+      validate: {
+        validator: function(valid) {
+          return valid.length > 0;
+        },
+        message: 'lengkapi, minimal 1 tag.'
+      }
+    },
+    // ______________________________________\\
     tanggal: { type: Date, default: Date.now},
     isPublished: Boolean,
 
@@ -44,11 +54,12 @@ mongoose.connect('mongodb://localhost/latihan1', {useNewUrlParser: true})
     const artikel = new Artikel({
       nama: 'Charlote',
       nim: 09108244453,
-      category: '-',
+      category: 'S1',
       email: 'charlotefamily@gmail.com',
       judul: 'learn express',
-      tags: ['express', 'backend'],
-      isPublished: true
+      tags: [],
+      isPublished: true,
+      nilai: 75
     });
 
     try {
